@@ -34,8 +34,8 @@ Future<void> main(List<String> args) async {
       JsonDecoder().convert(await File.fromUri((await Isolate.packageConfig)!).readAsString())['packages']
                    .firstWhere((pkg) => pkg['name'] == 'flutter_wasm')['rootUri']);
   final outDir = libBuildOutDir(Directory.current.uri).toFilePath();
-  exitCode = await _runFlutter(workingDirectory, ['pub', 'get']);
-  if (exitCode != 0) return;
+  /* exitCode = await _runFlutter(workingDirectory, ['pub', 'get']); */
+  /* if (exitCode != 0) return; */
   exitCode =
       await _runFlutter(workingDirectory, ['pub', 'run', 'wasm:setup', '-o', outDir, ...args]);
 
