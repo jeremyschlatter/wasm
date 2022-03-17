@@ -12,11 +12,12 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'dart:convert';
+import 'dart:isolate';
+
 import 'package:wasm/src/shared.dart';
 
-final workingDirectory = Uri.file(Platform.script.path).resolve('..');
-
-Future<int> _runFlutter(List<String> args) async {
+Future<int> _runFlutter(Uri workingDirectory, List<String> args) async {
   print('flutter ${args.join(' ')}');
   final process = await Process.start(
     'flutter',
@@ -29,9 +30,13 @@ Future<int> _runFlutter(List<String> args) async {
 }
 
 Future<void> main(List<String> args) async {
+  final workingDirectory = Uri.parse(
+      JsonDecoder().convert(await File.fromUri((await Isolate.packageConfig)!).readAsString())['packages']
+                   .firstWhere((pkg) => pkg['name'] == 'flutter_wasm')['rootUri']);
   final outDir = libBuildOutDir(Directory.current.uri).toFilePath();
-  exitCode = await _runFlutter(['pub', 'get']);
+  exitCode = await _runFlutter(workingDirectory, ['pub', 'get']);
   if (exitCode != 0) return;
   exitCode =
-      await _runFlutter(['pub', 'run', 'wasm:setup', '-o', outDir, ...args]);
+      await _runFlutter(workingDirectory, ['pub', 'run', 'wasm:setup', '-o', outDir, ...args]);
+
 }
