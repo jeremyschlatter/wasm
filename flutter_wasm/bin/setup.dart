@@ -9,36 +9,29 @@
 // Usage: flutter pub run flutter_wasm:setup
 // For more details use the --help option.
 
-/* import 'dart:async'; */
-/* import 'dart:io'; */
-
-/* import 'dart:convert'; */
-/* import 'dart:isolate'; */
+import 'dart:async';
+import 'dart:io';
 
 import 'package:wasm/src/shared.dart';
 
-/* Future<int> _runFlutter(Uri workingDirectory, List<String> args) async { */
-/*   print('flutter ${args.join(' ')}'); */
-/*   final process = await Process.start( */
-/*     'flutter', */
-/*     args, */
-/*     workingDirectory: workingDirectory.toFilePath(), */
-/*   ); */
-/*   unawaited(stdout.addStream(process.stdout)); */
-/*   unawaited(stderr.addStream(process.stderr)); */
-/*   return process.exitCode; */
-/* } */
+final workingDirectory = Uri.file(Platform.script.path).resolve('..');
 
-Future<void> main(List<String> arguments) async {
-  return setupMain(arguments);
+Future<int> _runFlutter(List<String> args) async {
+  print('flutter ${args.join(' ')}');
+  final process = await Process.start(
+    'flutter',
+    args,
+    workingDirectory: workingDirectory.toFilePath(),
+  );
+  unawaited(stdout.addStream(process.stdout));
+  unawaited(stderr.addStream(process.stderr));
+  return process.exitCode;
+}
 
-/*   final workingDirectory = Uri.parse( */
-/*       JsonDecoder().convert(await File.fromUri((await Isolate.packageConfig)!).readAsString())['packages'] */
-/*                    .firstWhere((pkg) => pkg['name'] == 'flutter_wasm')['rootUri']); */
-/*   final outDir = libBuildOutDir(Directory.current.uri).toFilePath(); */
-/*   /1* exitCode = await _runFlutter(workingDirectory, ['pub', 'get']); *1/ */
-/*   /1* if (exitCode != 0) return; *1/ */
-/*   exitCode = */
-/*       await _runFlutter(workingDirectory, ['pub', 'run', 'wasm:setup', '-o', outDir, ...args]); */
-
+Future<void> main(List<String> args) async {
+  final outDir = libBuildOutDir(Directory.current.uri).toFilePath();
+  exitCode = await _runFlutter(['pub', 'get']);
+  if (exitCode != 0) return;
+  exitCode =
+      await _runFlutter(['pub', 'run', 'wasm:setup', '-o', outDir, ...args]);
 }

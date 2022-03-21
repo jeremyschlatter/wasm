@@ -12,9 +12,8 @@ dependencies:
   flutter:
     sdk: flutter
   wasm:
-    # path: ../wasm
     git:
-      url: https://github.com/jeremyschlatter/wasm.git
+      url: https://github.com/dart-lang/wasm.git
       path: wasm
 
 dev_dependencies:
@@ -31,6 +30,4 @@ flutter:
     platforms:
       android:
         package: dev.dart.flutter_wasm
-        pluginClass: FlutterWasmPlugin
-      macos:
         pluginClass: FlutterWasmPlugin
